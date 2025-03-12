@@ -76,11 +76,41 @@ public class BankActionThread extends ActionThread
             nextEventAction = "No events to process";
         
     }
-        
 
-    public void executeApplication()
-    {
-        //ADD CODE HERE TO RUN THE EVENT SIMULATION
+
+    public void executeApplication() {
+        System.out.println("Starting Event Loop...");
+
+        if (theEvents.isEmpty()) {
+            System.out.println("ERROR: Event queue is empty at start! No events to process.");
+            return;
+        }
+
+        while (!theEvents.isEmpty()) {
+            SimulationEvent nextEvent = theEvents.remove();
+
+            if (nextEvent == null) {
+                System.out.println("No more events. Exiting loop.");
+                break;
+            }
+
+            System.out.println("Processing event: " + nextEvent.getDescription() + " at time " + nextEvent.getTime());
+
+            nextEvent.process();
+
+            lastEventReport = nextEvent.getPostActionReport();
+            if (!theEvents.isEmpty()) {
+                nextEventAction = theEvents.peek().getDescription();
+            } else {
+                nextEventAction = "No more events.";
+            }
+
+            myReport.updateTime(theEvents.getCurrentTime());
+
+            animationPause();
+        }
+
+        System.out.println("Event Loop Finished.");
     }
     
 

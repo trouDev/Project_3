@@ -13,19 +13,27 @@ public class SimulationEventQueue implements SimulationEventQueueInterface {
         simulationTime = 0.0;
     }
     @Override
-    public void add(SimulationEvent newEntry) {
-        if (newEntry.getTime() >= simulationTime) {
-            queue.add(newEntry);
+    public void add(SimulationEvent event) {
+        if (event.getTime() < simulationTime) {
+            System.out.println("ERROR: Trying to add an event in the past!");
+            return;
         }
+
+        queue.add(event);
+        System.out.println("Added event: " + event.getDescription() + " at time " + event.getTime());
     }
 
     @Override
     public SimulationEvent remove() {
-        SimulationEvent next = queue.poll();
-        if (next != null) {
-            simulationTime = next.getTime();
+        if (queue.isEmpty()) {
+            System.out.println("ERROR: Tried to remove event, but queue is empty!");
+            return null;
         }
-        return next;
+
+        SimulationEvent event = queue.poll(); // Use queue.remove() if poll() isn't available
+        System.out.println("Removed event: " + event.getDescription() + " at time " + event.getTime());
+
+        return event;
     }
 
     @Override

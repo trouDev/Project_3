@@ -66,6 +66,7 @@ public class CustomerGenerator
     	 */
     	public void process()
     	{
+           System.out.println("Processing Customer Generation at time " + theEventQueue.getCurrentTime());
     	   Customer generated = new Customer(getName(), theEventQueue.getCurrentTime());
     	   theLine.enqueue(generated);
     	   postActionReport = "Generated customer " + lastNameWas;

@@ -24,25 +24,29 @@ public class Teller
     private String lastNameWas;
     private BankLine theLine;
     private Report reportServices;
-    
-    
-    public Teller(String name,int maxTimeToHelpCustomer, SimulationEventQueue simulationEventQueue,
-                            Random simulationRandomGenerator, BankLine servicesLine,
-                            Report toReportTo)
-    {
+
+
+    public Teller(String name, int maxTimeToHelpCustomer, SimulationEventQueue simulationEventQueue,
+                  Random simulationRandomGenerator, BankLine servicesLine, Report toReportTo) {
         myName = name;
-        serving = null; 
+        serving = null;
         maxForHelp = maxTimeToHelpCustomer;
         theEventQueue = simulationEventQueue;
         sharedRandomGenerator = simulationRandomGenerator;
         theLine = servicesLine;
         reportServices = toReportTo;
-        
-        //ADD CODE HERE TO GENERATE THE INITIAL EVENT
 
-        
+        // DEBUG: Check if constructor runs
+        System.out.println("Teller " + myName + " created. Adding initial check event...");
 
-        } // end constructor
+        // Schedule the first event
+        double initialTime = theEventQueue.getCurrentTime();
+        CheckForCustomerEvent firstEvent = new CheckForCustomerEvent(initialTime, "Initial Check");
+        theEventQueue.add(firstEvent);
+
+        // DEBUG: Confirm event was added
+        System.out.println("Added Initial CheckForCustomerEvent at time " + initialTime);
+    }
     
     /**
      * Start serving a customer.
@@ -68,12 +72,26 @@ public class Teller
     	/**
     	 * Process the event.
     	 */
-    	synchronized
-    	public void process()
-    	{
-    	   // ADD CODE HERE FOR PROCESSING A CUSTOMER
-   	   
-    	}
+        synchronized
+        public void process() {
+            System.out.println("Processing CheckForCustomerEvent at time " + theEventQueue.getCurrentTime());
+
+            if (!theLine.isEmpty()) {
+                Customer nextCustomer = theLine.dequeue(); // Ensure `dequeue()` exists
+                System.out.println("Serving customer: " + nextCustomer);
+                serve(nextCustomer);
+
+                double serviceTime = sharedRandomGenerator.nextInt(maxForHelp) + 1;
+                System.out.println("Scheduling next check in " + serviceTime + " seconds.");
+
+                theEventQueue.add(new CheckForCustomerEvent(
+                        theEventQueue.getCurrentTime() + serviceTime, "Check after Serving"));
+            } else {
+                System.out.println("No customers in line, rechecking in 1 second.");
+                theEventQueue.add(new CheckForCustomerEvent(
+                        theEventQueue.getCurrentTime() + 1, "Rechecking Line"));
+            }
+        }
 
     }  // end of GenerateCustomerEvent    
     
