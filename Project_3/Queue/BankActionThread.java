@@ -41,7 +41,7 @@ public class BankActionThread extends ActionThread
     // Make sure they are initialized
     private int maxForService = 20;
     private int maxForInterval = 20;
-    private int stopSimulationAt = 1000;
+    private int stopSimulationAt = 250;
    
     
     // Displayed items
@@ -86,7 +86,7 @@ public class BankActionThread extends ActionThread
             return;
         }
 
-        while (!theEvents.isEmpty()) {
+        while (theEvents.getCurrentTime() <= stopSimulationAt) {
             SimulationEvent nextEvent = theEvents.remove();
 
             if (nextEvent == null) {
