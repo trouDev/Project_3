@@ -15,6 +15,8 @@ public class StackSort {
         int data[] = null;
         int result[] = null;
 
+
+
         Scanner input;
         input = new Scanner(System.in);
 
@@ -78,11 +80,56 @@ public class StackSort {
      */
     private static int[] doStackSort(int data[]) {
 
-    int result[] = new int[data.length];
+        int result[] = new int[data.length];
+        if (data.length == 0) { return result; }
 
-        
-    // ADD CODE HERE TO SORT THE ARRAY USING TWO STACKS
+        // ADD CODE HERE TO SORT THE ARRAY USING TWO STACKS
+        VectorStack<Integer> upperValues = new VectorStack<Integer>();
+        VectorStack<Integer> lowerValues = new VectorStack<Integer>();
 
+    /*
+    for (int i = 0; i < data.length; i++) {
+        upperValues.push(data[i]);
+    }
+    */
+        boolean adding = true;
+        int i = 0;
+
+        /*
+        for (Integer num : data) { // I despise for each loops!
+            while (!upperValues.isEmpty() && upperValues.peek() > num) {
+                lowerValues.push(upperValues.pop());
+            }
+
+            upperValues.push(num);
+
+            while (!lowerValues.isEmpty()) {
+                upperValues.push(lowerValues.pop());
+            }
+        }
+
+         */
+
+        while (i < data.length) {
+            if (!lowerValues.isEmpty() && lowerValues.peek() > data[i]) {
+                upperValues.push(lowerValues.pop());
+            } else if (!upperValues.isEmpty() && upperValues.peek() < data[i]) {
+                lowerValues.push(upperValues.pop());
+            } else {
+                upperValues.push(data[i]);
+                i++;
+            }
+        }
+
+        while (!lowerValues.isEmpty()) {
+            upperValues.push(lowerValues.pop());
+        }
+
+        int j = 0;
+        while (!upperValues.isEmpty()) {
+            result[j] = upperValues.pop();
+            j++;
+        }
         return result;
 
     }
